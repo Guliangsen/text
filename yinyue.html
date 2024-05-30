@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Music Redirect</title>
+    <script>
+        function redirect() {
+            // 检测是否安装网易云音乐或QQ音乐
+            var neteaseMusicScheme = "orpheus://song/1963552844";
+            var qqMusicScheme = "qqmusic://song?id=1963552844";
+            var neteaseMusicUrl = "orpheus://song/1963552844";
+            var qqMusicUrl = "qqmusic://song?id=1963552844";
+            var fallbackUrl = "https://music.163.com/#/song?id=1963552844";
+
+            function openApp(url, fallback) {
+                var timeout;
+                var openAppTime = Date.now();
+                var iframe = document.createElement("iframe");
+                iframe.style.display = "none";
+                iframe.src = url;
+                document.body.appendChild(iframe);
+
+                timeout = setTimeout(function () {
+                    var elapsed = Date.now() - openAppTime;
+                    if (elapsed < 1500) {
+                        window.location.href = fallback;
+                    }
+                }, 1000);
+
+                window.onblur = function () {
+                    clearTimeout(timeout);
+                };
+            }
+
+            if (navigator.userAgent.match(/iPhone|iPad|iPod/)) {
+                // iOS
+                openApp(neteaseMusicUrl, fallbackUrl);
+            } else if (navigator.userAgent.match(/Android/)) {
+                // Android
+                openApp(neteaseMusicUrl, fallbackUrl);
+                setTimeout(function () {
+                    openApp(qqMusicUrl, fallbackUrl);
+                }, 2000);
+            } else {
+                window.location.href = fallbackUrl;
+            }
+        }
+
+        document.addEventListener("DOMContentLoaded", redirect);
+    </script>
+</head>
+<body>
+    <p>Redirecting...</p>
+</body>
+</html>
